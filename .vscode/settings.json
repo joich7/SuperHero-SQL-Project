@@ -13,7 +13,7 @@
             "server": "localhost",
             "port": 5432,
             "driver": "PostgreSQL",
-            "name": "postgres",
+            "name": "postgre",
             "database": "postgres",
             "username": "postgres"
         }
