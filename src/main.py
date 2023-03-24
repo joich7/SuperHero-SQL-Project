@@ -65,14 +65,15 @@ def listnames():
 
 def updateHero():
     listnames()
-    selector = input("Which hero would you like to edit?")
+    heroIDinput = input("Which hero would you like to edit?")
     select = int(input("""what would you like to change about this hero 
     1) Name 
     2) About me 
     3) Biography
     4) Abilities \n"""))
     
-    getInfo(selector)
+    getInfo(heroIDinput)
+
     if select == 1:
         value = input("Input new Name: ")
         quer = """
@@ -80,7 +81,8 @@ def updateHero():
         SET name = %s
         WHERE id = %s
         """
-        execute_query(quer,(value,selector,))
+        execute_query(quer,(value,heroIDinput,))
+
     elif select == 2:
         value = input("Input new about me info: ")
         quer = """
@@ -88,7 +90,8 @@ def updateHero():
         SET about_me = %s
         WHERE id = %s
         """
-        execute_query(quer,(value,selector,))
+        execute_query(quer,(value,heroIDinput,))
+
     elif select == 3:
         value = input("Input new biography: ")
         quer = """
@@ -96,13 +99,10 @@ def updateHero():
         SET biography = %s
         WHERE id = %s
         """
-        execute_query(quer,(value,selector,))
-    elif select == 4:
-       
+        execute_query(quer,(value,heroIDinput,))
 
-        joinStr = " ".join(ability)
-        print(f""" 
-        Abilities: {joinStr}""")
+    elif select == 4:
+      
 
         #print out abilities
         abilities_query = f"""
@@ -114,18 +114,19 @@ def updateHero():
         abilities = execute_query(abilities_query).fetchall()
         ability = []
         abilityType = []
+        
+        joinStr = " ".join(ability)
+        print(f""" 
+        Abilities: {joinStr}""")
+
+
         counter = 1
         for x in abilities:
-            if x[0] == selector:
+            if x[0] == heroIDinput:
                 print(f"{counter}) {str(x[1])}")
                 ability.append(str(x[1]))
                 abilityType.append(str(3))
                 counter += 1
-
-
-
-
-
 
         choice = input("What would you like to do? 1)Add new ability 2)delete ability")
         
@@ -143,11 +144,13 @@ def updateHero():
         elif choice == 2:
             abilityDel = int(input("Which ability would you like to delete?"))
             del_ability_value = abilityType[abilityDel-1]
+
             q = f"""
             DELETE FROM abilities 
-            WHERE hero_id = {selector}
-            AND ability_type_id = {del_ability_value}
+            WHERE ability_type_id = {del_ability_value}
+            AND hero_id = {selector}
             """
+
         #UPDATE abilities
         #SET ability_type_id = %s
         #WHERE hero_id = %s
