@@ -36,5 +36,5 @@ add abilites func: function can be used on its own and is used if prompted in cr
         -Print all heros and select based on Id
         -user input: id(needs to be stored to plug into functions)
         -ask what you want to edit about the hero(name,bio,abilities etc)
-        
-        
+
+SELECT * FROM heroes JOIN(abilities JOIN ability_types ON abilities.ability_type_id = ability_types.id ) ON 
