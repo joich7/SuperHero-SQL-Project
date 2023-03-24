@@ -1,9 +1,8 @@
 from database.db_connection import execute_query,create_connection
 
-def listAbilities():
-    abilities = execute_query("SELECT * FROM ability_types").fetchall()
-    for ability in abilities:
-        print(f"{ability[0]}) {ability[1]}")
+
+    
+    
 
 def listallInfo():
 
@@ -64,13 +63,16 @@ def listnames():
         print("enter a valid hero number")
 
 
-def updateHero(location):
+def updateHero():
+    listnames()
+    selector = input("Which hero would you like to edit?")
     select = int(input("""what would you like to change about this hero 
     1) Name 
     2) About me 
     3) Biography
     4) Abilities \n"""))
-
+    
+    getInfo(selector)
     if select == 1:
         value = input("Input new Name: ")
         quer = """
@@ -78,7 +80,7 @@ def updateHero(location):
         SET name = %s
         WHERE id = %s
         """
-        execute_query(quer,(value,location,))
+        execute_query(quer,(value,selector,))
     elif select == 2:
         value = input("Input new about me info: ")
         quer = """
@@ -86,7 +88,7 @@ def updateHero(location):
         SET about_me = %s
         WHERE id = %s
         """
-        execute_query(quer,(value,location,))
+        execute_query(quer,(value,selector,))
     elif select == 3:
         value = input("Input new biography: ")
         quer = """
@@ -94,21 +96,58 @@ def updateHero(location):
         SET biography = %s
         WHERE id = %s
         """
-        execute_query(quer,(value,location,))
+        execute_query(quer,(value,selector,))
     elif select == 4:
-        listAbilities()
-        choice = input("What would you like to do? 1)Add new ability 2)delete ability")
-        value = input("Input new abilities")
-        splValue = value.split(",")
-        print(splValue)
-        for ability in splValue:
-            quer = """
-            INSERT into abilities (hero_id, ability_type_id)
-            VALUES(%s,%s)
-            """
-            execute_query(quer, (location, ability))
+       
 
-        #quer = """
+        joinStr = " ".join(ability)
+        print(f""" 
+        Abilities: {joinStr}""")
+
+        #print out abilities
+        abilities_query = f"""
+        SELECT hero_id, name , ability_type_id
+        FROM abilities 
+        JOIN ability_types 
+        ON abilities.ability_type_id = ability_types.id
+        """
+        abilities = execute_query(abilities_query).fetchall()
+        ability = []
+        abilityType = []
+        counter = 1
+        for x in abilities:
+            if x[0] == selector:
+                print(f"{counter}) {str(x[1])}")
+                ability.append(str(x[1]))
+                abilityType.append(str(3))
+                counter += 1
+
+
+
+
+
+
+        choice = input("What would you like to do? 1)Add new ability 2)delete ability")
+        
+        if choice == 1:
+            value = input("Input new abilities")
+            splValue = value.split(",")
+            for ability in splValue:
+                quer = """
+                INSERT into abilities (hero_id, ability_type_id)
+                VALUES(%s,%s)
+                """
+                execute_query(quer, (location, ability))
+
+
+        elif choice == 2:
+            abilityDel = int(input("Which ability would you like to delete?"))
+            del_ability_value = abilityType[abilityDel-1]
+            q = f"""
+            DELETE FROM abilities 
+            WHERE hero_id = {selector}
+            AND ability_type_id = {del_ability_value}
+            """
         #UPDATE abilities
         #SET ability_type_id = %s
         #WHERE hero_id = %s
@@ -155,25 +194,4 @@ while end:
         newHero()
 
     elif option == 4: # Edit hero 
-        listnames()
-        selector = input("Which hero would you like to edit?")
-        getInfo(selector)
-        updateHero(selector)
-
-        abilities_query = f"""
-        SELECT hero_id, name
-        FROM abilities 
-        JOIN ability_types 
-        ON abilities.ability_type_id = ability_types.id
-        """
-        abilities = execute_query(abilities_query).fetchall()
-    
-        ability = []
-        for x in abilities:
-            if x[0] == selector:
-                ability.append(str(x[1]))
-
-        joinStr = " ".join(ability)
-        print(f""" 
-        Abilities: {joinStr}""")
-  
+        updateHero()
