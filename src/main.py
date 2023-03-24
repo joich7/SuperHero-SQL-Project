@@ -8,10 +8,10 @@ def listAbilities():
 def listallInfo():
 
     basic_info_query = """
-        SELECT id,name FROM heroes
+        SELECT * FROM heroes
     """
     abilities_query = f"""
-        SELECT *
+        SELECT hero_id, name
         FROM abilities 
         JOIN ability_types 
         ON abilities.ability_type_id = ability_types.id
@@ -23,17 +23,19 @@ def listallInfo():
         for x in abilities:
             
             if x[0] == hero[0]:
-                ability.append(x[1])
+                ability.append(str(x[1]))
+
         joinStr = " ".join(ability)
         print(f"""{hero[0]}) {hero[1]}
-
+        About Me: {hero[2]}
+        Bio: {hero[3]}
         Abilities: {joinStr}""")
 
 def getInfo(x):
     info = execute_query(f"SELECT name,about_me FROM heroes WHERE id = {x}")
     for i in info:
         print(i)
-        
+
 
 def newHero():
     name = input("Enter new hero name")
@@ -48,7 +50,7 @@ def newHero():
     input()
 
 
-end = False
+end = True
 
 def listnames():
     try:
@@ -95,6 +97,7 @@ def updateHero(location):
         execute_query(quer,(value,location,))
     elif select == 4:
         listAbilities()
+        choice = input("What would you like to do? 1)Add new ability 2)delete ability")
         value = input("Input new abilities")
         splValue = value.split(",")
         print(splValue)
@@ -121,8 +124,12 @@ def updateHero(location):
     #bio
     #
 
-#add new abilities function 
-listallInfo()
+
+
+
+
+
+
 
 while end:
     option = int(input("""What would you like to do? 
@@ -152,4 +159,21 @@ while end:
         selector = input("Which hero would you like to edit?")
         getInfo(selector)
         updateHero(selector)
+
+        abilities_query = f"""
+        SELECT hero_id, name
+        FROM abilities 
+        JOIN ability_types 
+        ON abilities.ability_type_id = ability_types.id
+        """
+        abilities = execute_query(abilities_query).fetchall()
+    
+        ability = []
+        for x in abilities:
+            if x[0] == selector:
+                ability.append(str(x[1]))
+
+        joinStr = " ".join(ability)
+        print(f""" 
+        Abilities: {joinStr}""")
   
